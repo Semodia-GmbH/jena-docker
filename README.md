@@ -1,6 +1,6 @@
 # Docker files for Jena
 
-[![Build](https://github.com/stain/jena-docker/actions/workflows/main.yml/badge.svg)](https://github.com/stain/jena-docker/actions/workflows/main.yml)
+[![Build](https://github.com/Semodia-GmbH/jena-docker/actions/workflows/main.yml/badge.svg)](https://github.com/Semodia-GmbH/jena-docker/actions/workflows/main.yml)
 
 This repository hosts [Docker](https://www.docker.com/) recipes for distributing 
 [Apache Jena](http://jena.apache.org/).
@@ -25,6 +25,10 @@ These are available from GitHub as:
 Note that although these Docker images are based on the official Apache Jena releases
 and do not alter them in any way, they do **not** constitute official releases
 from Apache Software Foundation, and are probably not the latest version.
+
+## Fork
+
+This is a fork of https://github.com/stain/jena-docker with the latest Jena versions.
 
 ## Building
 
