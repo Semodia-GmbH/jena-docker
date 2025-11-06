@@ -32,19 +32,38 @@ jobs:
           docker build -t jena-fuseki jena-fuseki
       - name: Test images
         run: |
-          docker run jena riot --version  # Does it run at all?
+          set -euo pipefail
+
+          # Does the Jena image run at all?
+          docker run --rm jena riot --version
+
+          # Simple RIOT round-trip
           echo "<http://example.com/a> <http://example.com/b> <http://example.com/c> ." > /tmp/example.ttl
-          docker run --volume /tmp:/rdf jena riot example.ttl > /tmp/example.nq
-          grep --quiet example.com /tmp/example.nq
-          sudo service docker restart ; sleep 10 # workaround for https://github.com/travis-ci/travis-ci/issues/4778
+          docker run --rm -v /tmp:/rdf jena riot /rdf/example.ttl > /tmp/example.nq
+          grep -q example.com /tmp/example.nq
+
+          # Start Fuseki
           docker run --name fuseki -p 127.0.0.1:3030:3030 -d jena-fuseki
-          sleep 8
-          curl --silent --output /dev/null  --show-error -L --max-redirs 3 --retry 3 --retry-delay 4 --max-time 30 http://127.0.0.1:3030/
+
+          # Wait until HTTP is ready (more reliable than scraping logs)
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:3030/ >/dev/null; then
+              break
+            fi
+            sleep 2
+          done
+
+          # Show logs for context
           docker logs fuseki
-          docker logs fuseki 2>&1 | grep --quiet ^admin=
-          docker logs fuseki 2>&1 | grep --quiet Started
-          curl http://127.0.0.1:3030/ | grep --quiet Fuseki
-          docker kill --signal=SIGINT `docker ps -q`
-          sleep 4
-          docker ps
-          test -z "`docker ps -q`" || exit 1
+
+          # Check admin password is printed and UI is up
+          docker logs fuseki 2>&1 | grep -q '^admin='
+          curl -fsS http://127.0.0.1:3030/ | grep -q 'Fuseki'
+
+          # Graceful shutdown and cleanup
+          docker kill --signal=SIGINT fuseki
+          docker wait fuseki >/dev/null
+          docker rm fuseki
+
+          # Ensure nothing left running
+          test -z "$(docker ps -q)"
