@@ -15,9 +15,7 @@
 
 FROM eclipse-temurin:21-jre-alpine
 
-MAINTAINER Stian Soiland-Reyes <stain@apache.org>
-
-ENV LANG C.UTF-8
+ENV LANG=C.UTF-8
 
 RUN set -eux; \
     apk -U upgrade; \
@@ -25,22 +23,22 @@ RUN set -eux; \
     rm -rf /var/cache/apk/*
 
 
-
 # Update below according to https://jena.apache.org/download/
 # and checksum for apache-jena-4.x.x.tar.gz.sha512
-ENV JENA_SHA512 f426275591aaa5274a89cab2f2ee16623086c5f0c7669bda5b2cead90089497e57098885745fd88e3c7db75cbaac48fe58f84ec9cd2dbb937592ff2f0ef0f92e
-ENV JENA_VERSION 5.1.0
-ENV ASF_MIRROR https://www.apache.org/dyn/mirrors/mirrors.cgi?action=download&filename=
-ENV ASF_ARCHIVE https://archive.apache.org/dist/
+ENV JENA_SHA512=220ff50c3b6803c2cdade5479f8812700b281f4153fd73cdb83277b30f3d2c9e8a4a49d09717cfa7dde4fe5c7132a2aaaeeef3fbc474a6773b3d9deb5d63cbaa
+ENV JENA_VERSION=5.6.0
+ENV ASF_MIRROR=https://www.apache.org/dyn/mirrors/mirrors.cgi?action=download&filename=
+ENV ASF_ARCHIVE=https://archive.apache.org/dist/
 
-LABEL org.opencontainers.image.url https://github.com/stain/jena-docker/tree/master/jena
-LABEL org.opencontainers.image.source https://github.com/stain/jena-docker/
-LABEL org.opencontainers.image.documentation https://jena.apache.org/documentation/tools/
-LABEL org.opencontainers.image.title "Apache Jena"
-LABEL org.opencontainers.image.description "Jena riot is a command line tool for parsing and validating multiple RDF formats"
-LABEL org.opencontainers.image.version ${FUSEKI_VERSION}
-LABEL org.opencontainers.image.licenses "(Apache-2.0 AND (GPL-2.0 WITH Classpath-exception-2.0) AND GPL-3.0)"
-LABEL org.opencontainers.image.authors "Apache Jena by https://jena.apache.org/; this image by https://orcid.org/0000-0001-9842-9718"
+LABEL org.opencontainers.image.url=https://github.com/Semodia-GmbH/jena-dockertree/master/jena-fuseki
+LABEL org.opencontainers.image.source=https://github.com/Semodia-GmbH/jena-docker
+LABEL org.opencontainers.image.documentation=https://jena.apache.org/documentation/tools/
+LABEL org.opencontainers.image.title="Apache Jena"
+LABEL org.opencontainers.image.description="Jena riot is a command line tool for parsing and validating multiple RDF formats"
+LABEL org.opencontainers.image.version=${JENA_VERSION}
+LABEL org.opencontainers.image.licenses="(Apache-2.0 AND (GPL-2.0 WITH Classpath-exception-2.0) AND GPL-3.0)"
+LABEL org.opencontainers.image.authors="Apache Jena by https://jena.apache.org/; this image by https://orcid.org/0000-0001-9842-9718"
+LABEL org.opencontainers.image.vendor="Semodia GmbH"
 
 
 WORKDIR /tmp
@@ -56,7 +54,7 @@ RUN     (curl --location --silent --show-error --fail --retry-connrefused --retr
 	cd /jena && rm -rf *javadoc* *src* bat
 
 # Add to PATH
-ENV PATH $PATH:/jena/bin
+ENV PATH=$PATH:/jena/bin
 # Check it works
 RUN riot  --version
 
